@@ -1,0 +1,37 @@
+# this is an auto generated file. This will be overwritten
+mutation CreatePortfolio(
+  $input: CreatePortfolioInput!
+  $condition: ModelPortfolioConditionInput
+) {
+  createPortfolio(input: $input, condition: $condition) {
+    id
+    name
+    description
+    createdAt
+    updatedAt
+  }
+}
+mutation UpdatePortfolio(
+  $input: UpdatePortfolioInput!
+  $condition: ModelPortfolioConditionInput
+) {
+  updatePortfolio(input: $input, condition: $condition) {
+    id
+    name
+    description
+    createdAt
+    updatedAt
+  }
+}
+mutation DeletePortfolio(
+  $input: DeletePortfolioInput!
+  $condition: ModelPortfolioConditionInput
+) {
+  deletePortfolio(input: $input, condition: $condition) {
+    id
+    name
+    description
+    createdAt
+    updatedAt
+  }
+}
