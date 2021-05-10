@@ -24,8 +24,25 @@
 
 <div class="content" role="main">
 
+  <h2>Login</h2>
+
+  <div class="card-container">
+    <div class="card-large" tabindex="0">
+
+      <amplify-authenticator>
+        <div>
+          Restaurants App
+          <amplify-sign-out></amplify-sign-out>
+        </div>
+        <!-- previous code -->
+      </amplify-authenticator>
+    </div>
+
+  </div>
+
+
   <!-- Highlight Card -->
-  <div class="card highlight-card card-small">
+  <div class="card highlight-card card-large">
 
     <div class="form-body">
       <form autocomplete="off" [formGroup]="createForm" (ngSubmit)="onCreate(createForm.value)">
@@ -45,13 +62,7 @@
   </div>
 
   <!-- Resources -->
-  <h2>Portfolios</h2>
-
-  <div class="card-container">
-    
-
-  </div>
-
+  
   <!-- Next Steps -->
   <h2>Next Steps</h2>
   <p>What do you want to do next with your app?</p>

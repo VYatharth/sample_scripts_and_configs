@@ -1,0 +1,14 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\amplify",
+    "\\amplify\\backend",
+    "\\amplify\\backend\\api",
+    "\\amplify\\backend\\api\\PortfolioAPI",
+    "\\src",
+    "\\src\\app",
+    "\\src\\types"
+  ],
+  "SelectedNode": "\\src\\polyfills.ts",
+  "PreviewInSolutionExplorer": false
+}
