@@ -1,5 +1,0 @@
-type Portfolio @model {
-  id: ID!
-  name: String!
-  description: String!
-}
