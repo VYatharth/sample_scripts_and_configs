@@ -1,0 +1,17 @@
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+    name: my-backendconfig
+    namespace: guacamole
+spec:
+    healthCheck:
+        checkIntervalSec: 15
+        port: 8080
+        type: HTTP
+        requestPath: /guacamole/index.html
+    # This timeout is how long the websocket used by Guacamole client can remain open
+    timeoutSec: 7200
+    iap:
+        enabled: true
+        oauthclientCredentials:
+            secretName: guacamole-iap-secret

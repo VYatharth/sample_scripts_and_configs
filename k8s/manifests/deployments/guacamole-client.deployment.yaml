@@ -1,0 +1,68 @@
+
+  apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: guacamole-client
+    namespace: guacamole
+    labels:
+      app: guacamole-client
+  spec:
+    
+    # replicas: not specified here:
+    # 1. Default is 1.
+    # 2. Will be tuned in real time if DNS horizontal auto-scaling is turned on.
+    strategy:
+      type: RollingUpdate
+      rollingUpdate:
+        maxUnavailable: 1
+    selector:
+      matchLabels:
+        app: guacamole-client
+    template:
+      metadata:
+        labels:
+          app: guacamole-client
+      spec:
+        serviceAccountName: svc-guacamole
+        containers:
+        - name: guacamole-client
+          image: guacamole-client-iap
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/config
+          envFrom:
+            - configMapRef:
+                name: guacamole-client-settings
+            - secretRef:
+                name: db-user-pass
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 2000Mi
+            requests:
+              cpu: 1000m
+              memory: 2000Mi
+          ports:
+          - containerPort: 8080
+            name: serving-port
+            protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /guacamole
+              port: serving-port
+            failureThreshold: 1
+            periodSeconds: 10
+            initialDelaySeconds: 60
+            timeoutSeconds: 5 
+          startupProbe:
+            httpGet:
+              path: /guacamole
+              port: serving-port
+            failureThreshold: 30
+            periodSeconds: 10
+            initialDelaySeconds: 20
+        volumes:
+          - name: config-volume
+            configMap:
+              name: java-trust-store

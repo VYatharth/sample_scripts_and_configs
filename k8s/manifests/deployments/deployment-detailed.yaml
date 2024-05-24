@@ -1,0 +1,93 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app-be
+  namespace: guacamole
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: hello
+  template:
+    metadata:
+      labels:
+        app: hello
+    spec:
+      serviceAccountName: default
+      terminationGracePeriodSeconds: 5
+      volumes:
+        - name: config-volume
+          configMap:
+            name: java-trust-store
+      securityContext:
+        fsGroup: 1000
+        runAsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+      containers:
+        - name: hello-app
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+          # Replace $LOCATION with your Artifact Registry location (e.g., us-west1).
+          # Replace $GCLOUD_PROJECT with your project ID.
+          image: $LOCATION-docker.pkg.dev/$GCLOUD_PROJECT/hello-repo/helloworld-gke:latest
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/config
+          # This app listens on port 8080 for web traffic by default.
+          ports:
+            - containerPort: 4822
+              name: guacd
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: guacamole-client-settings
+            - secretRef:
+                name: db-user-pass
+          env:
+            - name: PORT
+              value: "8080"
+          resources:
+            # You must specify requests for CPU to autoscale
+            # based on CPU utilization
+            requests:
+              memory: "1Gi"
+              cpu: "500m"
+              ephemeral-storage: "1Gi"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+              ephemeral-storage: "1Gi"
+          readinessProbe:
+            initialDelaySeconds: 10
+            httpGet:
+              path: "/_healthz"
+              port: 8080
+              httpHeaders:
+                - name: "Cookie"
+                  value: "shop_session-id=x-readiness-probe"
+          livenessProbe:
+            httpGet:
+              path: /guacamole
+              port: serving-port
+            failureThreshold: 1
+            periodSeconds: 10
+            initialDelaySeconds: 60
+            timeoutSeconds: 5
+          startupProbe:
+            httpGet:
+              path: /guacamole
+              port: serving-port
+            failureThreshold: 30
+            periodSeconds: 10
+            initialDelaySeconds: 20
